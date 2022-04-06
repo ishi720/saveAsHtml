@@ -1,27 +1,27 @@
 ###
-# ã‚¨ã‚¯ã‚»ãƒ«(.xlsx)ã‚’HTML(.html)å½¢å¼ã«å¤‰æ›
+# ƒGƒNƒZƒ‹(.xlsx)‚ğHTML(.html)Œ`®‚É•ÏŠ·
 #
-# å®Ÿè¡Œã‚³ãƒãƒ³ãƒ‰
+# ÀsƒRƒ}ƒ“ƒh
 # PowerShell -ExecutionPolicy RemoteSigned ".\saveExcelAsHtml.ps1"
 ###
 
-# ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’å‡ºã—ã¦ã€ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã™ã‚‹
-# @return fileList ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆ
+# ƒ_ƒCƒAƒƒO‚ğo‚µ‚ÄAƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚·‚é
+# @return fileList ƒtƒ@ƒCƒ‹ƒŠƒXƒg
 function fileSelect() {
     [void][System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms")
     $dialog = New-Object System.Windows.Forms.OpenFileDialog
-    $dialog.Filter = "Excelãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼|*.xlsx;*.xlsm;*.xlsb;*.xltx;*.xltm;*.xls;*.xlt;*.xls;*.xml;*.xlam;*.xla;*.xlw;*.xlr;"
+    $dialog.Filter = "Excelƒtƒ@ƒCƒ‹Œ`®|*.xlsx;*.xlsm;*.xlsb;*.xltx;*.xltm;*.xls;*.xlt;*.xls;*.xml;*.xlam;*.xla;*.xlw;*.xlr;"
 
-    # èµ·å‹•æ™‚ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªPath
+    # ‹N“®‚ÌƒfƒBƒŒƒNƒgƒŠPath
     $dialog.InitialDirectory = Convert-Path .
 
-    # ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«
-    $dialog.Title = "ãƒ•ã‚¡ã‚¤ãƒ«é¸æŠ"
+    # ƒ_ƒCƒAƒƒOƒEƒCƒ“ƒhƒEƒ^ƒCƒgƒ‹
+    $dialog.Title = "ƒtƒ@ƒCƒ‹‘I‘ğ"
 
-    # è¤‡æ•°é¸æŠ
+    # •¡”‘I‘ğ
     $dialog.Multiselect = $true
 
-    # ãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤º
+    # ƒ_ƒCƒAƒƒO•\¦
     if($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK){
         return $dialog.FileNames
     } else {
@@ -30,21 +30,21 @@ function fileSelect() {
 }
 
 ###
-# ãƒ¡ã‚¤ãƒ³å‡¦ç†
+# ƒƒCƒ“ˆ—
 ###
 
 
-# ã‚¨ã‚¯ã‚»ãƒ«æ“ä½œåˆæœŸåŒ–
+# ƒGƒNƒZƒ‹‘€ì‰Šú‰»
 $excel = New-Object -ComObject Excel.Application
 
-# ã‚¨ã‚¯ã‚»ãƒ«å¯è¦–åŒ–
+# ƒGƒNƒZƒ‹‰Â‹‰»
 $excel.Visible = $False
 
-# å¤‰æ•°ã«ã‚»ãƒƒãƒˆ
+# •Ï”‚ÉƒZƒbƒg
 $targetDir = [System.IO.Directory]::GetCurrentDirectory()
 $savaDir = $targetDir+"\html"
 
-#ä¿å­˜ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ä½œæˆ
+#•Û‘¶ƒfƒBƒŒƒNƒgƒŠ‚Ìì¬
 New-Item $savaDir -ItemType Directory
 
 $itemList = fileSelect
@@ -53,21 +53,21 @@ foreach($item in $itemList) {
     $filename = [System.IO.Path]::GetFileName("$item")
     $saveFile = Join-Path $targetDir "html" | Join-Path -ChildPath $filename
 
-    # ã‚¨ã‚¯ã‚»ãƒ«ã‚’é–‹ã
+    # ƒGƒNƒZƒ‹‚ğŠJ‚­
     $book = $excel.Workbooks.Open($item)
 
-    # ãƒ•ã‚¡ã‚¤ãƒ«ã‚’htmlå½¢å¼ã§ä¿å­˜
-    # ç¬¬äºŒå¼•æ•°ã¯ã€ä¿å­˜å½¢å¼ã§ã‚³ãƒ¼ãƒ‰å€¤ã¯ä¸‹è¨˜URLå‚ç…§
+    # ƒtƒ@ƒCƒ‹‚ğhtmlŒ`®‚Å•Û‘¶
+    # ‘æ“ñˆø”‚ÍA•Û‘¶Œ`®‚ÅƒR[ƒh’l‚Í‰º‹LURLQÆ
     # https://docs.microsoft.com/ja-jp/dotnet/api/microsoft.office.interop.excel.xlfileformat?view=excel-pia
     $book.SaveAs([System.IO.Path]::ChangeExtension($saveFile,".html"),44)
 
-    # ã‚¨ã‚¯ã‚»ãƒ«ã‚’é–‰ã˜ã‚‹
+    # ƒGƒNƒZƒ‹‚ğ•Â‚¶‚é
     $excel.Quit()
 
     Write-Host $saveFile
 }
 
-# å¾Œå§‹æœ«
+# Œãn––
 $excel.Quit()
 $excel = $null
 [GC]::Collect()
